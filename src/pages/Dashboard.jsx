@@ -4,6 +4,8 @@
 // WCAG 1.4.1: Indicadores visuales siempre acompañados de texto
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { climaActual, pronosticoDiario, alertas } from "../data/mockData";
 import {
   Thermometer,
@@ -13,7 +15,16 @@ import {
   AlertTriangle,
   Eye,
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { toast } from "sonner";
 
 // Componente tarjeta de clima reutilizable
@@ -31,8 +42,10 @@ const TarjetaClima = ({ titulo, valor, unidad, icon: Icon, variacion }) => (
     </div>
     {variacion && (
       <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-        vs. ayer: <span className={variacion > 0 ? "text-red-500" : "text-green-500"}>
-          {variacion > 0 ? "+" : ""}{variacion}
+        vs. ayer:{" "}
+        <span className={variacion > 0 ? "text-red-500" : "text-green-500"}>
+          {variacion > 0 ? "+" : ""}
+          {variacion}
         </span>
       </p>
     )}
@@ -42,16 +55,40 @@ const TarjetaClima = ({ titulo, valor, unidad, icon: Icon, variacion }) => (
 // Componente indicador de riesgo
 const SemaferoRiesgo = ({ nivel }) => {
   const config = {
-    bajo: { color: "bg-green-100 dark:bg-green-900/30", textColor: "text-green-700 dark:text-green-400", label: "Condiciones favorables", icon: "✓" },
-    moderado: { color: "bg-yellow-100 dark:bg-yellow-900/30", textColor: "text-yellow-700 dark:text-yellow-400", label: "Precaución recomendada", icon: "⚠" },
-    alto: { color: "bg-orange-100 dark:bg-orange-900/30", textColor: "text-orange-700 dark:text-orange-400", label: "Alerta activa", icon: "⚠" },
-    critico: { color: "bg-red-100 dark:bg-red-900/30", textColor: "text-red-700 dark:text-red-400", label: "Emergencia climática", icon: "🚨" },
+    bajo: {
+      color: "bg-green-100 dark:bg-green-900/30",
+      textColor: "text-green-700 dark:text-green-400",
+      label: "Condiciones favorables",
+      icon: "✓",
+    },
+    moderado: {
+      color: "bg-yellow-100 dark:bg-yellow-900/30",
+      textColor: "text-yellow-700 dark:text-yellow-400",
+      label: "Precaución recomendada",
+      icon: "⚠",
+    },
+    alto: {
+      color: "bg-orange-100 dark:bg-orange-900/30",
+      textColor: "text-orange-700 dark:text-orange-400",
+      label: "Alerta activa",
+      icon: "⚠",
+    },
+    critico: {
+      color: "bg-red-100 dark:bg-red-900/30",
+      textColor: "text-red-700 dark:text-red-400",
+      label: "Emergencia climática",
+      icon: "🚨",
+    },
   };
 
   const c = config[nivel] || config.bajo;
 
   return (
-    <div className={`${c.color} rounded-lg p-6 mb-6 border-l-4 ${c.textColor.includes("green") ? "border-green-500" : c.textColor.includes("yellow") ? "border-yellow-500" : c.textColor.includes("orange") ? "border-orange-500" : "border-red-500"}`} role="status" aria-label={`Estado climático: ${c.label}`}>
+    <div
+      className={`${c.color} rounded-lg p-6 mb-6 border-l-4 ${c.textColor.includes("green") ? "border-green-500" : c.textColor.includes("yellow") ? "border-yellow-500" : c.textColor.includes("orange") ? "border-orange-500" : "border-red-500"}`}
+      role="status"
+      aria-label={`Estado climático: ${c.label}`}
+    >
       <div className="flex items-center gap-3 mb-2">
         <span className="text-2xl">{c.icon}</span>
         <h2 className={`text-lg font-bold ${c.textColor}`}>
@@ -64,6 +101,8 @@ const SemaferoRiesgo = ({ nivel }) => {
 };
 
 export default function Dashboard() {
+  usePageTitle("Dashboard | ClimaWatch");
+  const navigate = useNavigate();
   const [ultimaActualizacion, setUltimaActualizacion] = useState(new Date());
 
   useEffect(() => {
@@ -89,7 +128,8 @@ export default function Dashboard() {
           Dashboard
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
-          Última actualización: {ultimaActualizacion.toLocaleTimeString("es-ES")}
+          Última actualización:{" "}
+          {ultimaActualizacion.toLocaleTimeString("es-ES")}
         </p>
       </div>
 
@@ -149,10 +189,7 @@ export default function Dashboard() {
               stroke="#64748b"
               className="dark:stroke-slate-400"
             />
-            <YAxis
-              stroke="#64748b"
-              className="dark:stroke-slate-400"
-            />
+            <YAxis stroke="#64748b" className="dark:stroke-slate-400" />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#1e293b",
@@ -186,7 +223,10 @@ export default function Dashboard() {
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-orange-500" aria-hidden="true" />
+            <AlertTriangle
+              className="w-5 h-5 text-orange-500"
+              aria-hidden="true"
+            />
             Alertas Recientes
           </h2>
           <span className="text-sm px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded">
@@ -213,13 +253,15 @@ export default function Dashboard() {
                       📍 {alerta.zona} • 🕐 {alerta.hora}
                     </p>
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ${
-                    alerta.severidad === "alta"
-                      ? "bg-red-500 text-white"
-                      : alerta.severidad === "media"
-                      ? "bg-yellow-500 text-white"
-                      : "bg-blue-500 text-white"
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ${
+                      alerta.severidad === "alta"
+                        ? "bg-red-500 text-white"
+                        : alerta.severidad === "media"
+                          ? "bg-yellow-500 text-white"
+                          : "bg-blue-500 text-white"
+                    }`}
+                  >
                     {alerta.severidad.toUpperCase()}
                   </span>
                 </div>
@@ -232,7 +274,12 @@ export default function Dashboard() {
           </p>
         )}
 
-        <button className="w-full mt-4 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+        <button
+          type="button"
+          onClick={() => navigate("/alertas")}
+          className="w-full mt-4 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+          aria-label="Ver todas las alertas"
+        >
           <Eye className="w-4 h-4" aria-hidden="true" />
           Ver todas las alertas
         </button>

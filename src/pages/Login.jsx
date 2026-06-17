@@ -12,6 +12,7 @@ import { z } from "zod";
 import { useAuth } from "../context/AuthContext";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 // Esquema de validación con Zod
 // WCAG 3.3.3: Mensajes específicos y útiles
@@ -27,6 +28,7 @@ const loginSchema = z.object({
 });
 
 export default function Login() {
+  usePageTitle("Iniciar sesión | ClimaWatch");
   const navigate = useNavigate();
   const { login, error: authError, cargando } = useAuth();
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -110,7 +112,10 @@ export default function Login() {
                   id="email-error"
                   className="flex items-start gap-2 mt-2 text-red-600 dark:text-red-400 text-sm"
                 >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <AlertCircle
+                    className="w-4 h-4 flex-shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
                   <span>{errors.email.message}</span>
                 </div>
               )}
@@ -136,7 +141,9 @@ export default function Login() {
                       : "border-slate-300 dark:border-slate-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
                   } text-slate-900 dark:text-white`}
                   aria-invalid={errors.password ? "true" : "false"}
-                  aria-describedby={errors.password ? "password-error" : undefined}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
                   {...register("password")}
                 />
 
@@ -165,7 +172,10 @@ export default function Login() {
                   id="password-error"
                   className="flex items-start gap-2 mt-2 text-red-600 dark:text-red-400 text-sm"
                 >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <AlertCircle
+                    className="w-4 h-4 flex-shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
                   <span>{errors.password.message}</span>
                 </div>
               )}
@@ -199,7 +209,11 @@ export default function Login() {
           {/* Enlace de ayuda */}
           <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-4">
             ¿Necesita ayuda?{" "}
-            <button className="text-blue-600 dark:text-blue-400 hover:underline">
+            <button
+              type="button"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+              aria-label="Contacte al administrador"
+            >
               Contacte al administrador
             </button>
           </p>

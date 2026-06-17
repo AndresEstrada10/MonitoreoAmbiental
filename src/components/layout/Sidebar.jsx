@@ -25,15 +25,69 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
   // Ítems de navegación según rol
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home, href: "/dashboard", roles: ["usuario", "administrador"] },
-    { id: "pronostico", label: "Pronóstico", icon: Cloud, href: "/pronostico", roles: ["usuario", "administrador"] },
-    { id: "alertas", label: "Alertas", icon: AlertTriangle, href: "/alertas", roles: ["usuario", "administrador"] },
-    { id: "historico", label: "Histórico", icon: BarChart3, href: "/historico", roles: ["usuario", "administrador"] },
-    { id: "recomendaciones", label: "Recomendaciones", icon: Lightbulb, href: "/recomendaciones", roles: ["usuario", "administrador"] },
-    { id: "accesibilidad", label: "Accesibilidad", icon: Settings, href: "/accesibilidad", roles: ["usuario", "administrador"] },
-    { id: "usuarios", label: "Usuarios", icon: Users, href: "/admin/usuarios", roles: ["administrador"] },
-    { id: "datasets", label: "Datasets", icon: Database, href: "/admin/datasets", roles: ["administrador"] },
-    { id: "modelo", label: "Modelo", icon: Zap, href: "/admin/modelo", roles: ["administrador"] },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: Home,
+      href: "/dashboard",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "pronostico",
+      label: "Pronóstico",
+      icon: Cloud,
+      href: "/pronostico",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "alertas",
+      label: "Alertas",
+      icon: AlertTriangle,
+      href: "/alertas",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "historico",
+      label: "Histórico",
+      icon: BarChart3,
+      href: "/historico",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "recomendaciones",
+      label: "Recomendaciones",
+      icon: Lightbulb,
+      href: "/recomendaciones",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "accesibilidad",
+      label: "Accesibilidad",
+      icon: Settings,
+      href: "/accesibilidad",
+      roles: ["usuario", "administrador"],
+    },
+    {
+      id: "usuarios",
+      label: "Usuarios",
+      icon: Users,
+      href: "/admin/usuarios",
+      roles: ["administrador"],
+    },
+    {
+      id: "datasets",
+      label: "Datasets",
+      icon: Database,
+      href: "/admin/datasets",
+      roles: ["administrador"],
+    },
+    {
+      id: "modelo",
+      label: "Modelo",
+      icon: Zap,
+      href: "/admin/modelo",
+      roles: ["administrador"],
+    },
   ];
 
   // Filtrar ítems según rol
@@ -63,6 +117,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
         <nav className="p-4 space-y-1">
           {/* Botón cerrar en móvil */}
           <button
+            type="button"
             onClick={onClose}
             className="md:hidden w-full text-right p-2 mb-4"
             aria-label="Cerrar menú"

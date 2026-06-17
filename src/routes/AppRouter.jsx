@@ -21,6 +21,7 @@ import Accesibilidad from "../pages/Accesibilidad";
 
 // Páginas - Admin
 import RegistroUsuarios from "../pages/admin/RegistroUsuarios";
+import Modelo from "../pages/admin/Modelo";
 
 export const AppRouter = () => {
   const { isAutenticado, rol } = useAuth();
@@ -143,8 +144,22 @@ export const AppRouter = () => {
         }
       />
 
+      <Route
+        path="/admin/modelo"
+        element={
+          <ProtectedRoute requiredRol={["administrador"]}>
+            <Modelo />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Redirigir raíz a dashboard o login */}
-      <Route path="/" element={<Navigate to={isAutenticado ? "/dashboard" : "/login"} replace />} />
+      <Route
+        path="/"
+        element={
+          <Navigate to={isAutenticado ? "/dashboard" : "/login"} replace />
+        }
+      />
 
       {/* Página 404 */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -28,35 +28,7 @@ export const AccesibilidadProvider = ({ children }) => {
 
   const [anuncioA11y, setAnuncioA11y] = useState("");
 
-  // Persistir en localStorage cuando cambian los valores
-  useEffect(() => {
-    localStorage.setItem("a11y_tamano", tamañoTexto);
-  }, [tamañoTexto]);
-
-  useEffect(() => {
-    localStorage.setItem("a11y_dark_mode", modoOscuro);
-    // Aplicar clase 'dark' al documentElement
-    if (modoOscuro) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [modoOscuro]);
-
-  useEffect(() => {
-    localStorage.setItem("a11y_screen_reader", lectorPantalla);
-  }, [lectorPantalla]);
-
-  useEffect(() => {
-    localStorage.setItem("a11y_high_contrast", altoContraste);
-    if (altoContraste) {
-      document.documentElement.classList.add("high-contrast");
-    } else {
-      document.documentElement.classList.remove("high-contrast");
-    }
-  }, [altoContraste]);
-
-  // Obtener clase de tamaño para aplicar al body
+  // Obtener clase de tamaño para aplicar al documentElement
   const getTamañoClass = useCallback(() => {
     const map = {
       pequeño: "text-sm",
@@ -65,6 +37,42 @@ export const AccesibilidadProvider = ({ children }) => {
     };
     return map[tamañoTexto] || "text-base";
   }, [tamañoTexto]);
+
+  // Aplicar clases oscuro/contraste/tamaño al montar
+  useEffect(() => {
+    if (modoOscuro) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    if (altoContraste) {
+      document.documentElement.classList.add("high-contrast");
+    } else {
+      document.documentElement.classList.remove("high-contrast");
+    }
+    // Aplicar clase de tamaño inicial
+    document.documentElement.className = document.documentElement.className
+      .replace(/text-sm|text-base|text-lg/g, "")
+      .trim();
+    document.documentElement.classList.add(getTamañoClass());
+  }, [modoOscuro, altoContraste, getTamañoClass]);
+
+  // Persistir en localStorage cuando cambian los valores
+  useEffect(() => {
+    localStorage.setItem("a11y_tamano", tamañoTexto);
+  }, [tamañoTexto]);
+
+  useEffect(() => {
+    localStorage.setItem("a11y_dark_mode", modoOscuro);
+  }, [modoOscuro]);
+
+  useEffect(() => {
+    localStorage.setItem("a11y_screen_reader", lectorPantalla);
+  }, [lectorPantalla]);
+
+  useEffect(() => {
+    localStorage.setItem("a11y_high_contrast", altoContraste);
+  }, [altoContraste]);
 
   // Anunciar cambios para lectores de pantalla
   // WCAG 4.1.3: aria-live para notificaciones
@@ -75,21 +83,24 @@ export const AccesibilidadProvider = ({ children }) => {
   }, []);
 
   // Actualizar tamaño y anunciar
-  const actualizarTamano = useCallback((nuevoTamano) => {
-    setTamañoTexto(nuevoTamano);
-    const mensajes = {
-      pequeño: "Tamaño de texto reducido a pequeño",
-      mediano: "Tamaño de texto restaurado a mediano",
-      grande: "Tamaño de texto aumentado a grande",
-    };
-    anunciarCambio(mensajes[nuevoTamano]);
-  }, [anunciarCambio]);
+  const actualizarTamano = useCallback(
+    (nuevoTamano) => {
+      setTamañoTexto(nuevoTamano);
+      const mensajes = {
+        pequeño: "Tamaño de texto reducido a pequeño",
+        mediano: "Tamaño de texto restaurado a mediano",
+        grande: "Tamaño de texto aumentado a grande",
+      };
+      anunciarCambio(mensajes[nuevoTamano]);
+    },
+    [anunciarCambio],
+  );
 
   const toggleModoOscuro = useCallback(() => {
     setModoOscuro((prev) => {
       const nuevo = !prev;
       anunciarCambio(
-        nuevo ? "Modo oscuro activado" : "Modo oscuro desactivado"
+        nuevo ? "Modo oscuro activado" : "Modo oscuro desactivado",
       );
       return nuevo;
     });
@@ -101,7 +112,7 @@ export const AccesibilidadProvider = ({ children }) => {
       anunciarCambio(
         nuevo
           ? "Compatibilidad con lector de pantalla activada"
-          : "Compatibilidad con lector de pantalla desactivada"
+          : "Compatibilidad con lector de pantalla desactivada",
       );
       return nuevo;
     });
@@ -110,7 +121,9 @@ export const AccesibilidadProvider = ({ children }) => {
   const toggleAltoContraste = useCallback(() => {
     setAltoContraste((prev) => {
       const nuevo = !prev;
-      anunciarCambio(nuevo ? "Alto contraste activado" : "Alto contraste desactivado");
+      anunciarCambio(
+        nuevo ? "Alto contraste activado" : "Alto contraste desactivado",
+      );
       return nuevo;
     });
   }, [anunciarCambio]);
@@ -130,24 +143,18 @@ export const AccesibilidadProvider = ({ children }) => {
 
   return (
     <AccesibilidadContext.Provider value={value}>
-      <div
-        className={`${getTamañoClass()} ${modoOscuro ? "dark" : ""} ${
-          altoContraste ? "high-contrast" : ""
-        }`}
-      >
-        {/* Región viva para anuncios de accesibilidad */}
-        {lectorPantalla && (
-          <div
-            role="status"
-            aria-live="assertive"
-            aria-atomic="true"
-            className="sr-only"
-          >
-            {anuncioA11y}
-          </div>
-        )}
-        {children}
-      </div>
+      {/* Región viva para anuncios de accesibilidad */}
+      {lectorPantalla && (
+        <div
+          role="status"
+          aria-live="assertive"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {anuncioA11y}
+        </div>
+      )}
+      {children}
     </AccesibilidadContext.Provider>
   );
 };
@@ -157,7 +164,7 @@ export const useAccesibilidad = () => {
   const context = React.useContext(AccesibilidadContext);
   if (!context) {
     throw new Error(
-      "useAccesibilidad debe ser usado dentro de AccesibilidadProvider"
+      "useAccesibilidad debe ser usado dentro de AccesibilidadProvider",
     );
   }
   return context;
