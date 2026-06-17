@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-base font-sans;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+  }
+}
+
+/* Estilos para accesibilidad */
+@layer utilities {
+  /* WCAG 2.4.7: Foco visible en todos los elementos interactivos */
+  .focus-visible-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+
+  /* WCAG 2.4.2: sr-only para contenido solo para lectores de pantalla */
+  .sr-only {
+    @apply absolute w-1 h-1 p-0 m-0 overflow-hidden bg-transparent border-0;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Variación para hacer visible en focus (skip links) */
+  .sr-only.focus\:not-sr-only:focus {
+    @apply relative w-auto h-auto p-2 m-0 overflow-visible bg-blue-600 text-white border-0;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+  }
+
+  /* Alto contraste accesible */
+  .high-contrast {
+    @apply contrast-150;
+  }
+}
+
