@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { usePageTitle } from "../hooks/usePageTitle";
+import tutorialVideo from "../media/tutorial.mp4";
 
 const schema = z.object({
   nombre: z.string().min(1, "Requerido"),
@@ -11,17 +12,64 @@ const schema = z.object({
   zona: z.string().min(1, "Requerido"),
 });
 
+const STORAGE_KEY = "climawatch_alertas";
+
+const alertasIniciales = [
+  {
+    id: 1,
+    nombre: "Alerta PM2.5",
+    nivelMaximo: 150,
+    zona: "Centro",
+    activa: true,
+  },
+];
+
+const leerAlertasGuardadas = () => {
+  if (typeof window === "undefined") {
+    return alertasIniciales;
+  }
+
+  try {
+    const alertasGuardadas = window.localStorage.getItem(STORAGE_KEY);
+    if (!alertasGuardadas) {
+      return alertasIniciales;
+    }
+
+    const parsed = JSON.parse(alertasGuardadas);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : alertasIniciales;
+  } catch {
+    return alertasIniciales;
+  }
+};
+
 export default function ConfiguracionAlertas() {
   usePageTitle("Alertas | ClimaWatch");
-  const [alertas, setAlertas] = useState([
-    {
-      id: 1,
-      nombre: "Alerta PM2.5",
-      nivelMaximo: 150,
-      zona: "Centro",
-      activa: true,
-    },
-  ]);
+  const [alertas, setAlertas] = useState(leerAlertasGuardadas);
+
+  const transcripcion = [
+    "En el apartado de alertas se",
+    "puede acceder mediante el menú",
+    "lateral o también se puede",
+    "acceder mediante el mismo",
+    "dashboard en este atajo que",
+    "existe aquí. Aquí lo que podemos",
+    "implementar puede ser, por",
+    "ejemplo, alerta manta, elegimos",
+    "la variable de temperatura. Si",
+    "elegimos algo y lo dejamos en",
+    "selecciones nos va a decir que",
+    "se requiere un parámetro al que",
+    "queremos medir, que pongo que el",
+    "centro de manta y reportaremos",
+    "que la temperatura esta noche",
+    "está a 25 grados. Cuando creemos",
+    "alerta veremos que aparecerá por",
+    "aquí.",
+  ].join("\n");
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(alertas));
+  }, [alertas]);
 
   const {
     register,
@@ -34,7 +82,7 @@ export default function ConfiguracionAlertas() {
   });
 
   const onSubmit = (data) => {
-    setAlertas([...alertas, { id: Date.now(), ...data, activa: true }]);
+    setAlertas((current) => [...current, { id: Date.now(), ...data, activa: true }]);
     reset();
   };
 
@@ -183,6 +231,54 @@ export default function ConfiguracionAlertas() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] gap-6 items-start">
+        <section className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4 md:p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+              Video de apoyo: cómo llenar una alerta
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-6 max-w-3xl">
+              Aquí puedes mostrar un video tutorial para guiar al usuario paso a
+              paso al crear una alerta. Cuando quieras reemplazarlo por tu video
+              definitivo, solo cambia el archivo en <span className="font-semibold">src/media</span>.
+            </p>
+          </div>
+
+          <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-black">
+            <video
+              controls
+              preload="metadata"
+              className="w-full h-auto max-h-[70vh] bg-black"
+              aria-label="Video tutorial para crear una alerta"
+            >
+              <source src={tutorialVideo} type="video/mp4" />
+              Tu navegador no soporta video HTML5.
+            </video>
+          </div>
+        </section>
+
+        <aside className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+            Qué enseña este tutorial
+          </h2>
+          <ol className="space-y-3 text-sm text-slate-600 dark:text-slate-400 leading-6 list-decimal list-inside">
+            <li>Cómo abrir la pestaña de alertas desde el menú lateral.</li>
+            <li>Qué significa cada campo del formulario.</li>
+            <li>Cómo guardar la alerta para que quede registrada.</li>
+            <li>Cómo revisar abajo la lista de alertas configuradas.</li>
+          </ol>
+
+          <div className="mt-6 border-t border-slate-200 dark:border-slate-700 pt-6">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">
+              Transcripción del video
+            </h3>
+            <div className="max-h-80 overflow-y-auto rounded-lg bg-slate-50 dark:bg-slate-900/60 p-4 pr-3 text-sm text-slate-600 dark:text-slate-300 leading-7 whitespace-pre-line">
+              {transcripcion}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

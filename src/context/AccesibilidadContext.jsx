@@ -9,6 +9,9 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 export const AccesibilidadContext = createContext();
 
 export const AccesibilidadProvider = ({ children }) => {
+  const [idioma, setIdioma] = useState(() => {
+    return localStorage.getItem("a11y_language") || "es";
+  });
   // Estados con valores por defecto
   const [tamañoTexto, setTamañoTexto] = useState(() => {
     return localStorage.getItem("a11y_tamano") || "mediano";
@@ -26,36 +29,23 @@ export const AccesibilidadProvider = ({ children }) => {
     return localStorage.getItem("a11y_high_contrast") === "true" || false;
   });
 
-  const [anuncioA11y, setAnuncioA11y] = useState("");
+  const [daltonismo, setDaltonismo] = useState(() => {
+    return localStorage.getItem("a11y_daltonism") === "true" || false;
+  });
 
-  // Obtener clase de tamaño para aplicar al documentElement
-  const getTamañoClass = useCallback(() => {
-    const map = {
-      pequeño: "text-sm",
-      mediano: "text-base",
-      grande: "text-lg",
-    };
-    return map[tamañoTexto] || "text-base";
-  }, [tamañoTexto]);
+  const [anuncioA11y, setAnuncioA11y] = useState("");
 
   // Aplicar clases oscuro/contraste/tamaño al montar
   useEffect(() => {
-    if (modoOscuro) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    if (altoContraste) {
-      document.documentElement.classList.add("high-contrast");
-    } else {
-      document.documentElement.classList.remove("high-contrast");
-    }
-    // Aplicar clase de tamaño inicial
-    document.documentElement.className = document.documentElement.className
-      .replace(/text-sm|text-base|text-lg/g, "")
-      .trim();
-    document.documentElement.classList.add(getTamañoClass());
-  }, [modoOscuro, altoContraste, getTamañoClass]);
+    const root = document.documentElement;
+    root.setAttribute("lang", idioma === "en" ? "en-US" : "es-ES");
+    root.classList.toggle("dark", modoOscuro);
+    root.classList.toggle("high-contrast", altoContraste);
+    root.classList.toggle("daltonism-friendly", daltonismo);
+    root.classList.toggle("text-sm", tamañoTexto === "pequeño");
+    root.classList.toggle("text-base", tamañoTexto === "mediano");
+    root.classList.toggle("text-lg", tamañoTexto === "grande");
+  }, [modoOscuro, altoContraste, daltonismo, tamañoTexto, idioma]);
 
   // Persistir en localStorage cuando cambian los valores
   useEffect(() => {
@@ -73,6 +63,14 @@ export const AccesibilidadProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("a11y_high_contrast", altoContraste);
   }, [altoContraste]);
+
+  useEffect(() => {
+    localStorage.setItem("a11y_daltonism", daltonismo);
+  }, [daltonismo]);
+
+  useEffect(() => {
+    localStorage.setItem("a11y_language", idioma);
+  }, [idioma]);
 
   // Anunciar cambios para lectores de pantalla
   // WCAG 4.1.3: aria-live para notificaciones
@@ -128,6 +126,28 @@ export const AccesibilidadProvider = ({ children }) => {
     });
   }, [anunciarCambio]);
 
+  const toggleDaltonismo = useCallback(() => {
+    setDaltonismo((prev) => {
+      const nuevo = !prev;
+      anunciarCambio(
+        nuevo
+          ? "Paleta para daltonismo activada"
+          : "Paleta para daltonismo desactivada",
+      );
+      return nuevo;
+    });
+  }, [anunciarCambio]);
+
+  const toggleIdioma = useCallback(() => {
+    setIdioma((prev) => {
+      const nuevo = prev === "en" ? "es" : "en";
+      anunciarCambio(
+        nuevo === "en" ? "English enabled" : "Idioma español activado",
+      );
+      return nuevo;
+    });
+  }, [anunciarCambio]);
+
   const value = {
     tamañoTexto,
     actualizarTamano,
@@ -137,7 +157,11 @@ export const AccesibilidadProvider = ({ children }) => {
     toggleLectorPantalla,
     altoContraste,
     toggleAltoContraste,
-    getTamañoClass,
+    daltonismo,
+    toggleDaltonismo,
+    idioma,
+    toggleIdioma,
+    anunciarCambio,
     anuncioA11y,
   };
 

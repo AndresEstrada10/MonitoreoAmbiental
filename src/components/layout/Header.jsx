@@ -3,7 +3,7 @@
 // WCAG 2.4.7: Foco visible en botones interactivos
 // WCAG 1.4.11: Contraste de componentes no textuales
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useAccesibilidad } from "../../context/AccesibilidadContext";
 import { Menu, Bell, LogOut, Sun, Moon, X } from "lucide-react";
@@ -51,6 +51,22 @@ export const Header = ({ onMenuToggle, isSidebarOpen }) => {
   const toggleNotificaciones = () => {
     setMostrarNotificaciones(!mostrarNotificaciones);
   };
+
+  useEffect(() => {
+    if (!mostrarNotificaciones) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setMostrarNotificaciones(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mostrarNotificaciones]);
 
   return (
     <header
@@ -100,7 +116,7 @@ export const Header = ({ onMenuToggle, isSidebarOpen }) => {
 
             {/* Panel de notificaciones */}
             {mostrarNotificaciones && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
+              <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-1rem))] bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50" role="dialog" aria-label="Notificaciones recientes">
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                   <h3 className="font-semibold text-slate-900 dark:text-white">
                     Notificaciones

@@ -114,7 +114,7 @@ export default function CalidadAire() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                  Índice AQI - {resultados.zona}
+                  Índice <span lang="en">AQI</span> - {resultados.zona}
                 </p>
                 <p className="text-4xl font-bold text-yellow-900 dark:text-yellow-300">
                   {resultados.indiceAQI}

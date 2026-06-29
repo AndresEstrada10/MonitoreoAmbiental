@@ -13,6 +13,7 @@ import {
   BarChart3,
   Lightbulb,
   Settings,
+  BookOpen,
   Users,
   Database,
   Zap,
@@ -34,9 +35,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
     },
     {
       id: "pronostico",
-      label: "Pronóstico",
+      label: "Sensores",
       icon: Cloud,
-      href: "/pronostico",
+      href: "/sensores",
       roles: ["usuario", "administrador"],
     },
     {
@@ -48,9 +49,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
     },
     {
       id: "historico",
-      label: "Histórico",
+      label: "Calidad del aire",
       icon: BarChart3,
-      href: "/historico",
+      href: "/calidad-aire",
       roles: ["usuario", "administrador"],
     },
     {
@@ -68,6 +69,13 @@ export const Sidebar = ({ isOpen, onClose }) => {
       roles: ["usuario", "administrador"],
     },
     {
+      id: "guia",
+      label: "Guía",
+      icon: BookOpen,
+      href: "/guia",
+      roles: ["usuario", "administrador"],
+    },
+    {
       id: "usuarios",
       label: "Usuarios",
       icon: Users,
@@ -76,9 +84,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
     },
     {
       id: "datasets",
-      label: "Datasets",
+      label: "Reportes",
       icon: Database,
-      href: "/admin/datasets",
+      href: "/reportes",
       roles: ["administrador"],
     },
     {
@@ -108,9 +116,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static w-64 h-[calc(100vh-70px)] bg-slate-800 dark:bg-slate-900 text-white transition-transform duration-300 transform ${
+        className={`fixed md:static w-64 min-h-[calc(100dvh-70px)] bg-slate-800 dark:bg-slate-900 text-white transition-transform duration-300 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } z-40 overflow-y-auto`}
+        } z-40 overflow-y-auto overflow-x-hidden`}
         role="navigation"
         aria-label="Navegación principal"
       >

@@ -4,8 +4,9 @@
 // WCAG 1.4.1: Indicadores visuales siempre acompañados de texto
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
+import { useAuth } from "../context/AuthContext";
 import { climaActual, pronosticoDiario, alertas } from "../data/mockData";
 import {
   Thermometer,
@@ -103,6 +104,7 @@ const SemaferoRiesgo = ({ nivel }) => {
 export default function Dashboard() {
   usePageTitle("Dashboard | ClimaWatch");
   const navigate = useNavigate();
+  const { rol } = useAuth();
   const [ultimaActualizacion, setUltimaActualizacion] = useState(new Date());
 
   useEffect(() => {
@@ -119,12 +121,59 @@ export default function Dashboard() {
 
   // Alertas no leídas
   const alertasNoLeidas = alertas.filter((a) => !a.leida).slice(0, 3);
+  const accesosRapidos = [
+    {
+      label: "Sensores",
+      href: "/sensores",
+      descripcion: "Registrar y revisar sensores",
+    },
+    {
+      label: "Alertas",
+      href: "/alertas",
+      descripcion: "Configurar umbrales y alertas",
+    },
+    {
+      label: "Calidad del aire",
+      href: "/calidad-aire",
+      descripcion: "Consultar AQI y contaminantes",
+    },
+    {
+      label: "Reportes",
+      href: "/reportes",
+      descripcion: "Generar y descargar reportes",
+    },
+    {
+      label: "Recomendaciones",
+      href: "/recomendaciones",
+      descripcion: "Ver acciones preventivas",
+    },
+    {
+      label: "Accesibilidad",
+      href: "/accesibilidad",
+      descripcion: "Ajustar texto, contraste y atajos",
+    },
+  ];
+
+  if (rol === "administrador") {
+    accesosRapidos.push(
+      {
+        label: "Usuarios",
+        href: "/admin/usuarios",
+        descripcion: "Gestionar cuentas",
+      },
+      {
+        label: "Modelo",
+        href: "/admin/modelo",
+        descripcion: "Reentrenar y evaluar modelo",
+      },
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Encabezado */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 lang="en" className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
           Dashboard
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
@@ -135,6 +184,54 @@ export default function Dashboard() {
 
       {/* Indicador de riesgo */}
       <SemaferoRiesgo nivel={climaActual.nivelRiesgo} />
+
+      {/* Accesos rápidos */}
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Accesos rápidos
+          </h2>
+          <div className="hover-focus-popover">
+            <button
+              type="button"
+              className="wcag-focusable rounded-full border border-slate-300 bg-white px-3 py-1 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"
+              aria-describedby="dashboard-shortcuts-help"
+            >
+              Ayuda
+            </button>
+            <div
+              id="dashboard-shortcuts-help"
+              role="tooltip"
+              className="hover-focus-popover-content right-0 left-auto"
+            >
+              Navega con Tab o usa Ctrl + Alt + 1 a 8. Escape cierra paneles emergentes.
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          {accesosRapidos.map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className="group rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4 transition-colors hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-300">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-6">
+                    {item.descripcion}
+                  </p>
+                </div>
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 whitespace-nowrap">
+                  {item.href.replace("/", "") || "inicio"}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Grid de tarjetas de resumen */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

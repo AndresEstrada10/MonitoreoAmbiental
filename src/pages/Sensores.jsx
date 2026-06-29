@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,18 +13,44 @@ const schema = z.object({
   descripcion: z.string().max(200, "Máximo 200 caracteres").optional(),
 });
 
+const STORAGE_KEY = "climawatch_sensores";
+
+const sensoresIniciales = [
+  {
+    id: 1,
+    nombre: "Sensor Temperatura Centro",
+    ubicacion: "Centro",
+    tipoSensor: "temperatura",
+    estado: "activo",
+    zona: "Norte",
+  },
+];
+
+const leerSensoresGuardados = () => {
+  if (typeof window === "undefined") {
+    return sensoresIniciales;
+  }
+
+  try {
+    const sensoresGuardados = window.localStorage.getItem(STORAGE_KEY);
+    if (!sensoresGuardados) {
+      return sensoresIniciales;
+    }
+
+    const parsed = JSON.parse(sensoresGuardados);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : sensoresIniciales;
+  } catch {
+    return sensoresIniciales;
+  }
+};
+
 export default function Sensores() {
   usePageTitle("Sensores | ClimaWatch");
-  const [sensores, setSensores] = useState([
-    {
-      id: 1,
-      nombre: "Sensor Temperatura Centro",
-      ubicacion: "Centro",
-      tipoSensor: "temperatura",
-      estado: "activo",
-      zona: "Norte",
-    },
-  ]);
+  const [sensores, setSensores] = useState(leerSensoresGuardados);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sensores));
+  }, [sensores]);
 
   const {
     register,
@@ -37,7 +63,7 @@ export default function Sensores() {
   });
 
   const onSubmit = (data) => {
-    setSensores([...sensores, { id: Date.now(), ...data }]);
+    setSensores((current) => [...current, { id: Date.now(), ...data }]);
     reset();
   };
 

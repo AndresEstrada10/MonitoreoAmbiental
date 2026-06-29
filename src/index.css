@@ -3,20 +3,60 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+  }
+
   body {
-    @apply text-base font-sans;
+    @apply text-base font-sans leading-7 text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-900;
+    overflow-x: hidden;
+  }
+
+  main {
+    min-width: 0;
+  }
+
+  p,
+  li,
+  label,
+  button,
+  input,
+  select,
+  textarea,
+  a {
+    overflow-wrap: anywhere;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
   }
 
   h1 {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold leading-tight;
   }
 
   h2 {
-    @apply text-2xl font-semibold;
+    @apply text-2xl font-semibold leading-snug;
   }
 
   h3 {
-    @apply text-xl font-semibold;
+    @apply text-xl font-semibold leading-snug;
+  }
+
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold leading-snug;
+  }
+
+  p,
+  li {
+    @apply leading-7;
   }
 }
 
@@ -60,5 +100,165 @@
   /* Alto contraste accesible */
   .high-contrast {
     @apply contrast-150;
+  }
+
+  html.daltonism-friendly {
+    filter: saturate(1.2) contrast(1.08);
+  }
+
+  html.daltonism-friendly body {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  }
+
+  html.daltonism-friendly .bg-white,
+  html.daltonism-friendly .dark\:bg-slate-800,
+  html.daltonism-friendly .dark\:bg-slate-900,
+  html.daltonism-friendly .bg-slate-50,
+  html.daltonism-friendly .bg-slate-100 {
+    background-color: #f8fafc;
+  }
+
+  html.daltonism-friendly .bg-slate-200 {
+    background-color: #dbeafe;
+  }
+
+  html.daltonism-friendly .bg-slate-300 {
+    background-color: #bfdbfe;
+  }
+
+  html.daltonism-friendly .bg-blue-50 {
+    background-color: #ecfeff;
+  }
+
+  html.daltonism-friendly .bg-blue-100 {
+    background-color: #cffafe;
+  }
+
+  html.daltonism-friendly .bg-blue-600,
+  html.daltonism-friendly .hover\:bg-blue-600:hover,
+  html.daltonism-friendly .focus\:bg-blue-600:focus {
+    background-color: #0f766e;
+  }
+
+  html.daltonism-friendly .bg-blue-700,
+  html.daltonism-friendly .hover\:bg-blue-700:hover {
+    background-color: #115e59;
+  }
+
+  html.daltonism-friendly .text-blue-600,
+  html.daltonism-friendly .text-blue-500,
+  html.daltonism-friendly .text-blue-400,
+  html.daltonism-friendly .text-blue-700 {
+    color: #0f766e;
+  }
+
+  html.daltonism-friendly .border-blue-500,
+  html.daltonism-friendly .border-blue-400 {
+    border-color: #0f766e;
+  }
+
+  html.daltonism-friendly .ring-blue-500,
+  html.daltonism-friendly .focus\:ring-blue-500:focus,
+  html.daltonism-friendly .focus\:ring-blue-400:focus {
+    --tw-ring-color: #0f766e;
+  }
+
+  html.daltonism-friendly .text-indigo-600,
+  html.daltonism-friendly .text-indigo-500,
+  html.daltonism-friendly .text-indigo-400 {
+    color: #7c3aed;
+  }
+
+  html.daltonism-friendly .bg-indigo-600 {
+    background-color: #7c3aed;
+  }
+
+  html.daltonism-friendly .text-green-700,
+  html.daltonism-friendly .text-green-600,
+  html.daltonism-friendly .text-green-500 {
+    color: #1d4ed8;
+  }
+
+  html.daltonism-friendly .bg-green-100 {
+    background-color: #dbeafe;
+  }
+
+  html.daltonism-friendly .text-green-700,
+  html.daltonism-friendly .text-green-600,
+  html.daltonism-friendly .text-green-500 {
+    color: #1d4ed8;
+  }
+
+  html.daltonism-friendly .bg-yellow-100 {
+    background-color: #e0f2fe;
+  }
+
+  html.daltonism-friendly .text-yellow-700,
+  html.daltonism-friendly .text-yellow-400,
+  html.daltonism-friendly .text-yellow-300 {
+    color: #0369a1;
+  }
+
+  html.daltonism-friendly .bg-orange-100 {
+    background-color: #ede9fe;
+  }
+
+  html.daltonism-friendly .text-orange-700,
+  html.daltonism-friendly .text-orange-400,
+  html.daltonism-friendly .text-orange-500 {
+    color: #6d28d9;
+  }
+
+  html.daltonism-friendly .bg-red-100,
+  html.daltonism-friendly .bg-red-50 {
+    background-color: #e0f2fe;
+  }
+
+  html.daltonism-friendly .text-red-700,
+  html.daltonism-friendly .text-red-600,
+  html.daltonism-friendly .text-red-500 {
+    color: #0f766e;
+  }
+
+  html.daltonism-friendly .border-green-500 {
+    border-color: #2563eb;
+  }
+
+  html.daltonism-friendly .border-yellow-500 {
+    border-color: #0284c7;
+  }
+
+  html.daltonism-friendly .border-orange-500 {
+    border-color: #7c3aed;
+  }
+
+  html.daltonism-friendly .border-red-500 {
+    border-color: #0f766e;
+  }
+
+  html.daltonism-friendly .shadow-md,
+  html.daltonism-friendly .shadow-lg,
+  html.daltonism-friendly .shadow-xl,
+  html.daltonism-friendly .shadow-sm {
+    box-shadow:
+      0 0 0 1px rgba(15, 118, 110, 0.18),
+      0 12px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .wcag-focusable {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900;
+  }
+
+  .hover-focus-popover {
+    @apply relative;
+  }
+
+  .hover-focus-popover-content {
+    @apply absolute left-0 top-full z-50 mt-2 hidden min-w-[16rem] rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700 shadow-lg dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200;
+  }
+
+  .hover-focus-popover:hover .hover-focus-popover-content,
+  .hover-focus-popover:focus-within .hover-focus-popover-content {
+    @apply block;
   }
 }
